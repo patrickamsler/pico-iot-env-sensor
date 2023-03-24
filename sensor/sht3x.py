@@ -3,28 +3,35 @@ from sensor.crc_calculator import CrcCalculator
 
 
 class Sht3x:
-    sht3xI2cAddr = 0x45
+    SHT3X_IC2_ADDR = 0x45
     i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=100000)
-    crc8 = CrcCalculator(8, 0x31)
+    crc8 = CrcCalculator(width=8,
+                         polynomial=0x31,
+                         init_value=0xFF,
+                         final_xor=0x00)
 
     def isConnected(self):
         response = self.i2c.scan()
-        return self.sht3xI2cAddr in response
+        return self.SHT3X_IC2_ADDR in response
 
     def readData(self):
         # single shot measurement with clock stretching enabled
-        self.i2c.writeto(self.sht3xI2cAddr, b'\x2c\x06')
+        self.i2c.writeto(self.SHT3X_IC2_ADDR, b'\x2c\x06')
 
         # readout of single shot measurement (8 bytes) after sensor acknowledge
-        data = self.i2c.readfrom(self.sht3xI2cAddr, 8)
+        data = self.i2c.readfrom(self.SHT3X_IC2_ADDR, 8)
 
+        # convert 16bit data
         temp = (data[0] << 8) + data[1]
+        tempCrc = data[2]
         humidity = (data[3] << 8) + data[4]
+        humidityCrc = data[5]
 
-        print(data[3])
-        print(self.crc8([data[0], data[1]]))
+        # checksum
+        crcError = self.crc8(data[0:2]) != tempCrc or self.crc8(
+            data[3:5]) != humidityCrc
 
         tempCelsius = ((175.72 * temp) / 65536.0) - 45
         humidityRelative = ((100 * humidity) / 65536.0)
 
-        return tempCelsius, humidityRelative
+        return tempCelsius, humidityRelative, crcError
