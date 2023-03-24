@@ -1,9 +1,9 @@
-from sensor.sht3x import Sht3x
-# from machine import Timer
+from machine import Pin, I2C
+from sensor.sht3x import SHT3X
 
-# timer = Timer()
+i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=100000)
+sht3x = SHT3X(i2c)
 
-sht3x = Sht3x()
 
 def test():
     print("hello")
@@ -19,5 +19,3 @@ def test():
 
 
 test()
-
-# timer.init(freq=0.5, mode=Timer.PERIODIC, callback=test)

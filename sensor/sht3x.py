@@ -1,14 +1,16 @@
-from machine import Pin, I2C
 from sensor.crc_calculator import CrcCalculator
+from machine import I2C
 
 
-class Sht3x:
+class SHT3X:
     SHT3X_IC2_ADDR = 0x45
-    i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=100000)
     crc8 = CrcCalculator(width=8,
                          polynomial=0x31,
                          init_value=0xFF,
                          final_xor=0x00)
+
+    def __init__(self, i2c: I2C):
+        self.i2c = i2c
 
     def isConnected(self):
         response = self.i2c.scan()
