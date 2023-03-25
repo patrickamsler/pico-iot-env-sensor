@@ -30,8 +30,7 @@ class SHT3X:
         humidityCrc = data[5]
 
         # checksum
-        error = self.crc8(data[0:2]) != tempCrc or self.crc8(
-            data[3:5]) != humidityCrc
+        error = self.crc8(data[0:2]) != tempCrc or self.crc8(data[3:5]) != humidityCrc
 
         tempCelsius = ((175.72 * temp) / 65536.0) - 45
         humidityRelative = ((100 * humidity) / 65536.0)

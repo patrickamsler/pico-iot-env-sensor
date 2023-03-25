@@ -3,11 +3,17 @@
     "python.analysis.typeshedPaths": [
         ".vscode/Pico-W-Stub"
     ],
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "200",
+        "--experimental"
+    ],
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.extraPaths": [
         ".vscode/Pico-W-Stub/stubs"
     ],
     "picowgo.syncFolder": "",
-    "picowgo.openOnStart": true
+    "picowgo.openOnStart": true,
+    "editor.wordWrapColumn": 200
 }
