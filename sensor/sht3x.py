@@ -1,13 +1,8 @@
-from sensor.crc_calculator import CrcCalculator
 from machine import I2C
 
 
 class SHT3X:
     SHT3X_IC2_ADDR = 0x45
-    crc8 = CrcCalculator(width=8,
-                         polynomial=0x31,
-                         init_value=0xFF,
-                         final_xor=0x00)
 
     def __init__(self, i2c: I2C):
         self.i2c = i2c
@@ -36,3 +31,16 @@ class SHT3X:
         humidityRelative = ((100 * humidity) / 65536.0)
 
         return tempCelsius, humidityRelative, error
+
+    def crc8(self, data):
+        polynomial = 0x31
+        initValue = 0xFF
+        crc = initValue
+        for byte in data:
+            crc ^= byte
+            for _ in range(8):
+                if crc & 0x80:
+                    crc = (crc << 1) ^ polynomial
+                else:
+                    crc <<= 1
+        return crc & 0xFF
