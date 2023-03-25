@@ -22,6 +22,7 @@ if wlan.status() != 3:
 else:
     print('connected')
     status = wlan.ifconfig()
+    print(status)
     print('ip = ' + status[0])
 
 
