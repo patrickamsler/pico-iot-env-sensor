@@ -1,13 +1,20 @@
 import network
 import time
+import ujson
 from umqtt.simple import MQTTClient
 
-ssid = 'Salt_2GHz_1ACAA4'
-password = ''
+# Open the JSON file for reading
+with open('config.json', 'r') as file:
+    # Read the contents of the file
+    data = file.read()
+
+# Parse the JSON data
+config = ujson.loads(data)
+print(config)
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect(ssid, password)
+wlan.connect(ssid=config['wlan.ssid'], key=config['wlan.password'])
 
 max_wait = 10
 while max_wait > 0:
@@ -25,12 +32,11 @@ else:
     print(status)
     print('ip = ' + status[0])
 
-
 c = MQTTClient(
-    client_id="test_client",
-    server="192.168.1.2",
-    user="iot",
-    password=""
+    client_id=config["mqtt.clientId"],
+    server=config['mqtt.broker'],
+    user=config['mqtt.user'],
+    password=config['mqtt.password']
 )
 c.connect()
 c.publish(b"foo_topic", b"helloB", retain=True, qos=0)

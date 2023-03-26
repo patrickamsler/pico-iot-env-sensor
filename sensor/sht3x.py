@@ -34,8 +34,7 @@ class SHT3X:
 
     def crc8(self, data):
         polynomial = 0x31
-        initValue = 0xFF
-        crc = initValue
+        crc = 0xFF
         for byte in data:
             crc ^= byte
             for _ in range(8):
