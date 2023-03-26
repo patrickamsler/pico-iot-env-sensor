@@ -11,7 +11,7 @@ class SHT3X:
         response = self.i2c.scan()
         return self.SHT3X_IC2_ADDR in response
 
-    def readData(self):
+    def read(self):
         # single shot measurement with clock stretching enabled
         self.i2c.writeto(self.SHT3X_IC2_ADDR, b'\x2c\x06')
 

@@ -43,3 +43,4 @@ c.publish(b"foo_topic", b"helloB", retain=True, qos=0)
 time.sleep(5)
 c.publish(b"foo_topic", b"helloA", retain=True, qos=0)
 c.disconnect()
+
