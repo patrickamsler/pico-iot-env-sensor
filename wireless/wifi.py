@@ -1,14 +1,15 @@
-import network
+from network import WLAN, STA_IF
 
 class Wifi:
     def __init__(self, ssid, password):
         self.ssid = ssid
         self.password = password
-        self.wlan = network.WLAN(network.STA_IF)
+        self.wlan = WLAN(STA_IF)
 
     def connect(self):
         self.wlan.active(True)
         self.wlan.connect(self.ssid, self.password)
+        self.wait_for_connection()
     
     def is_connected(self):
         return self.wlan.isconnected()
