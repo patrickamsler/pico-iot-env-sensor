@@ -35,23 +35,30 @@ def main():
 
     # main data acquisition an publishing loop
     def publish_data(timer):
+        if not wifi.is_connected():
+            print("WiFi not connected. Not publishing data")
+            return
+
         temp, hum, error = sht31.read()
+        if error:
+            print("Error reading sensor. Not publishing data")
+            return
+
         if not error:
             print("Publishing data...", "Temperature: " + str(temp) + "°C", "Humidity: " + str(hum) + "%")
-            mqtt_client.connect()
-            mqtt_client.publish(mqtt_temperature_topic, str(temp), retain=False, qos=0)
-            mqtt_client.publish(mqtt_humidity_topic, str(hum), retain=False, qos=0)
-            mqtt_client.disconnect()
-        else:
-            print("Error reading sensor. Not publishing data")
+            try:
+                mqtt_client.connect()
+                mqtt_client.publish(mqtt_temperature_topic, str(temp), retain=False, qos=0)
+                mqtt_client.publish(mqtt_humidity_topic, str(hum), retain=False, qos=0)
+                mqtt_client.disconnect()
+                print("Data published successfully")
+            except Exception as e:
+                print("Error publishing data:", e)
 
+
+    # start the timer for the main loop
     timer = Timer()
-    timer.init(period=10000, mode=Timer.PERIODIC, callback=publish_data)
-
-    # Wait indefinitely while the timer continues to invoke the callback function
-    # while True:
-    #     time.sleep(1)
-
+    timer.init(period=20000, mode=Timer.PERIODIC, callback=publish_data)
 
 # start the main function
 if __name__ == "__main__":
