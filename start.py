@@ -3,7 +3,6 @@ from wireless.wifi import Wifi
 from sensor.sht3x import SHT3X
 from umqtt.simple import MQTTClient
 from machine import Pin, I2C, Timer
-import time
 
 
 def main():
@@ -24,10 +23,10 @@ def main():
     wifi.connect()
 
     # initialize mqtt client
-    mqtt_temperature_topic = config["mqtt.topics.temperature"]
-    mqtt_humidity_topic = config["mqtt.topics.humidity"]
+    mqtt_temperature_topic = config["mqtt.topics.status"]
+    mqtt_clientId = config["mqtt.clientId"]
     mqtt_client = MQTTClient(
-        client_id=config["mqtt.clientId"],
+        client_id=mqtt_clientId,
         server=config['mqtt.broker'],
         user=config['mqtt.user'],
         password=config['mqtt.password']
@@ -44,12 +43,17 @@ def main():
             print("Error reading sensor. Not publishing data")
             return
 
+        payload = {
+            "temperature": temp,
+            "humidity": hum,
+            "clientId": mqtt_clientId
+        }
+
         if not error:
-            print("Publishing data...", "Temperature: " + str(temp) + "°C", "Humidity: " + str(hum) + "%")
+            print("Publishing data...", payload)
             try:
                 mqtt_client.connect()
-                mqtt_client.publish(mqtt_temperature_topic, str(temp), retain=False, qos=0)
-                mqtt_client.publish(mqtt_humidity_topic, str(hum), retain=False, qos=0)
+                mqtt_client.publish(mqtt_temperature_topic, str(payload), retain=False, qos=0)
                 mqtt_client.disconnect()
                 print("Data published successfully")
             except Exception as e:
