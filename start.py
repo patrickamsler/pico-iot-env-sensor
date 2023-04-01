@@ -35,7 +35,7 @@ def main():
     wifi.connect()
 
     log.info("initializing MQTT client")
-    mqtt_temperature_topic = config["mqtt.topics.status"]
+    mqtt_status_topic = config["mqtt.topics.status"]
     mqtt_clientId = config["mqtt.clientId"]
     mqtt_client = MQTTClient(
         client_id=mqtt_clientId,
@@ -66,7 +66,7 @@ def main():
         log.debug("Publishing data: " + str(payload))
         try:
             mqtt_client.connect()
-            mqtt_client.publish(mqtt_temperature_topic, str(payload), retain=False, qos=0)
+            mqtt_client.publish(mqtt_status_topic, str(payload), retain=False, qos=0)
             mqtt_client.disconnect()
             statusLed.tick()
             log.debug("Data published")
