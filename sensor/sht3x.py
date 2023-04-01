@@ -1,22 +1,24 @@
 from machine import I2C
 
+SHT3X_IC2_ADDR_A = 0x44 # used by sht31 by M5 Stack
+SHT3X_IC2_ADDR_B = 0x45 # used by sht35 by Grove
 
 class SHT3X:
-    SHT3X_IC2_ADDR = 0x45
 
-    def __init__(self, i2c: I2C):
+    def __init__(self, i2c: I2C, addr=SHT3X_IC2_ADDR_A):
         self.i2c = i2c
+        self.addr = addr
 
     def isConnected(self):
         response = self.i2c.scan()
-        return self.SHT3X_IC2_ADDR in response
+        return self.addr in response
 
     def read(self):
         # single shot measurement with clock stretching enabled
-        self.i2c.writeto(self.SHT3X_IC2_ADDR, b'\x2c\x06')
+        self.i2c.writeto(self.addr, b'\x2c\x06')
 
         # readout of single shot measurement (8 bytes) after sensor acknowledge
-        data = self.i2c.readfrom(self.SHT3X_IC2_ADDR, 8)
+        data = self.i2c.readfrom(self.addr, 8)
 
         # convert 16bit data
         temp = (data[0] << 8) + data[1]

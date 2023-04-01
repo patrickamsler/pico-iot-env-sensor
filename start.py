@@ -58,15 +58,14 @@ def main():
             "clientId": mqtt_clientId
         }
 
-        if not error:
-            log.debug("Publishing data: " + str(payload))
-            try:
-                mqtt_client.connect()
-                mqtt_client.publish(mqtt_temperature_topic, str(payload), retain=False, qos=0)
-                mqtt_client.disconnect()
-                log.debug("Data published")
-            except Exception as e:
-                log.error("Error publishing data: ", e)
+        log.debug("Publishing data: " + str(payload))
+        try:
+            mqtt_client.connect()
+            mqtt_client.publish(mqtt_temperature_topic, str(payload), retain=False, qos=0)
+            mqtt_client.disconnect()
+            log.debug("Data published")
+        except Exception as e:
+            log.error("Error publishing data: ", e)
 
     log.info("starting data acquisition loop")
     timer = Timer()
