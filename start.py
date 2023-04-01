@@ -5,6 +5,7 @@ from umqtt.simple import MQTTClient
 from machine import Pin, I2C, Timer
 import util.logging as logging
 import sys
+from util.statusled import StatusLed
 
 def init_logging():
     # logging.basicConfig(filename='log-file.log', level=logging.DEBUG, filemode='a') # log to file
@@ -16,6 +17,8 @@ def main():
     init_logging()
     log = logging.getLogger(__name__)
     config = load_config()
+    statusLed = StatusLed()
+    statusLed.blink(2)
 
     log.info("initializing SHT31 sensor")
     sht31 = SHT3X(
@@ -41,6 +44,8 @@ def main():
         password=config['mqtt.password']
     )
 
+    statusLed.off()
+
     # main data acquisition an publishing loop
     def publish_data(timer):
         if not wifi.is_connected():
@@ -63,6 +68,7 @@ def main():
             mqtt_client.connect()
             mqtt_client.publish(mqtt_temperature_topic, str(payload), retain=False, qos=0)
             mqtt_client.disconnect()
+            statusLed.tick()
             log.debug("Data published")
         except Exception as e:
             log.error("Error publishing data: ", e)
