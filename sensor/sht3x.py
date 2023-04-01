@@ -1,7 +1,7 @@
 from machine import I2C
 
-SHT3X_IC2_ADDR_A = 0x44 # used by sht31 by M5 Stack
-SHT3X_IC2_ADDR_B = 0x45 # used by sht35 by Grove
+SHT3X_IC2_ADDR_A = 0x44 # used by sht31 from M5 Stack
+SHT3X_IC2_ADDR_B = 0x45 # used by sht35 from Grove
 
 class SHT3X:
 
