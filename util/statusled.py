@@ -8,17 +8,20 @@ class StatusLed:
 
     def blink(self, freq):
         self.off()
-        def tick(timer):
-            self.led.toggle()
-        self.timer.init(freq=freq, mode=Timer.PERIODIC, callback=tick)
+        self.timer.init(
+            freq=freq,
+            mode=Timer.PERIODIC,
+            callback=lambda t: self.led.toggle()
+        )
 
     def tick(self):
         self.off()
         self.led.on()
-
-        def turnLedOff(timer):
-            self.led.off()
-        self.timer.init(period=500, mode=Timer.ONE_SHOT, callback=turnLedOff)
+        self.timer.init(
+            period=500,
+            mode=Timer.ONE_SHOT,
+            callback=lambda t: self.led.off()
+        )
 
     def off(self):
         self.timer.deinit()
