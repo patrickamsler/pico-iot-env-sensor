@@ -1,5 +1,5 @@
 
-## How to flash the firmware
+## How to flash the Pico firmware
 1. Download the firmware file from the official Raspberry Pi Pico website.
 2. Connect your Pico to your computer using a micro USB cable.
 3. Put your Pico in bootloader mode by pressing and holding the BOOTSEL button while plugging in the USB cable
@@ -18,3 +18,20 @@ This will whip out the whole flash memory. The firmware needs to be reinstalled 
 ```bash
 cp -X flash_nuke.uf2 /Volumes/RPI-RP2/
 ```
+
+## How to install the Sensor Application
+1. Rename start.py to main.py
+2. Add a file called config.json with the following content:
+```json
+{
+    "wlan.ssid": "your wifi network name",
+    "wlan.password": "your wifi password",
+    "mqtt.broker": "mqtt server address",
+    "mqtt.user": "mqtt server username",
+    "mqtt.password": "mqtt server password",
+    "mqtt.clientId": "client id",
+    "mqtt.topics.status": "sensors/livingroom/status"
+}
+```
+3. Connect your Pico to your computer using a micro USB cable.
+4. Upload the files to the Pico's mass storage device
