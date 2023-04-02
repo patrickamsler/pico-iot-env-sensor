@@ -6,6 +6,7 @@ from machine import Pin, I2C, Timer
 import util.logging as logging
 import sys
 from util.statusled import StatusLed
+import json
 
 def init_logging():
     # logging.basicConfig(filename='log-file.log', level=logging.DEBUG, filemode='a') # log to file
@@ -36,9 +37,9 @@ def main():
 
     log.info("initializing MQTT client")
     mqtt_status_topic = config["mqtt.topics.status"]
-    mqtt_clientId = config["mqtt.clientId"]
+    mqtt_client_id = config["mqtt.client_id"]
     mqtt_client = MQTTClient(
-        client_id=mqtt_clientId,
+        client_id=mqtt_client_id,
         server=config['mqtt.broker'],
         user=config['mqtt.user'],
         password=config['mqtt.password']
@@ -57,16 +58,16 @@ def main():
             log.error("Error reading sensor data")
             return
 
-        payload = {
+        payload = json.dumps({
             "temperature": temp,
             "humidity": hum,
-            "clientId": mqtt_clientId
-        }
+            "client_id": mqtt_client_id
+        })
 
-        log.debug("Publishing data: " + str(payload))
+        log.debug("Publishing data: " + payload)
         try:
             mqtt_client.connect()
-            mqtt_client.publish(mqtt_status_topic, str(payload), retain=False, qos=0)
+            mqtt_client.publish(mqtt_status_topic, payload, retain=False, qos=0)
             mqtt_client.disconnect()
             statusLed.tick()
             log.debug("Data published")
