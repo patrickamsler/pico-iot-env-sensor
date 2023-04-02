@@ -24,13 +24,14 @@ cp -X flash_nuke.uf2 /Volumes/RPI-RP2/
 2. Add a file called config.json with the following content:
 ```json
 {
+    "device_id": "1234",
+    "sample_rate_seconds": 30,
     "wlan.ssid": "your wifi network name",
     "wlan.password": "your wifi password",
     "mqtt.broker": "mqtt server address",
     "mqtt.user": "mqtt server username",
     "mqtt.password": "mqtt server password",
-    "mqtt.clientId": "client id",
-    "mqtt.topics.status": "sensors/livingroom/status"
+    "mqtt.topics.status": "devices/livingroom/sensors/status"
 }
 ```
 3. Connect your Pico to your computer using a micro USB cable.

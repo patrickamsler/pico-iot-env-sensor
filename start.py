@@ -37,9 +37,9 @@ def main():
 
     log.info("initializing MQTT client")
     mqtt_status_topic = config["mqtt.topics.status"]
-    mqtt_client_id = config["mqtt.client_id"]
+    device_id = config["device_id"]
     mqtt_client = MQTTClient(
-        client_id=mqtt_client_id,
+        client_id=device_id,
         server=config['mqtt.broker'],
         user=config['mqtt.user'],
         password=config['mqtt.password']
@@ -61,7 +61,7 @@ def main():
         payload = json.dumps({
             "temperature": temp,
             "humidity": hum,
-            "client_id": mqtt_client_id
+            "device_id": device_id
         })
 
         log.debug("Publishing data: " + payload)
@@ -75,8 +75,9 @@ def main():
             log.error("Error publishing data: ", e)
 
     log.info("starting data acquisition loop")
+    period = config["sample_rate_seconds"] * 1000
     timer = Timer()
-    timer.init(period=20000, mode=Timer.PERIODIC, callback=publish_data)
+    timer.init(period=period, mode=Timer.PERIODIC, callback=publish_data)
 
 
 # start the main function
