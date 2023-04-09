@@ -1,6 +1,6 @@
 import socket
 import util.logging as logging
-from util.config import load_config
+from util.config import load_config, save_config
 import json
 import ujson
 
@@ -50,16 +50,21 @@ class Server:
         path = request_lines[0].split(" ")[1]
         body = None
         if (verb == "POST"):
-            split = request_str.split("\r\n\r\n")
-            if (len(split) > 1):
-                body = split[1]
+            body = self.__parseBody(request_str)
         return verb, path, body
+
+    def __parseBody(self, request_str):
+        body = None
+        split = request_str.split("\r\n\r\n")
+        if (len(split) > 1):
+            body = split[1]
+        return body
 
     def __response(self, status=200, body=None, content_type="text/html"):
         return f"HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\n\r\n{body}"
 
     def __status_response(self):
-        config = load_config()
+        config = self.__load_config()
         device_id = config["device_id"]
         # TODO get temp and humidity from sensor
         temp = 22.5
@@ -72,7 +77,7 @@ class Server:
         return self.__response(body=response, content_type="application/json")
 
     def __config_response(self):
-        config = load_config()
+        config = self.__load_config()
         response = json.dumps(config)
         return self.__response(body=response, content_type="application/json")
 
@@ -81,13 +86,21 @@ class Server:
             return self.__response(status=400, body="Invalid config")
 
         new_config = ujson.loads(body)
-        current_config = load_config()
+        current_config = self.__load_config()
 
         # does new config have the same fields as current config?
         if not set(new_config.keys()) == set(current_config.keys()):
             return self.__response(status=400, body="Invalid config")
 
-        # TODO update config file and reset pico
-        print('updating config')
+        save_config(new_config)
 
-        return self.__response(status=201, body=json.dumps(new_config), content_type="application/json")
+        response = json.dumps(new_config)
+        return self.__response(status=201, body=response, content_type="application/json")
+
+    def __load_config(self):
+        config = load_config()
+        # Check if any key in the configuration contains the string 'password'
+        for key in config:
+            if 'password' in key:
+                config[key] = '********'
+        return config

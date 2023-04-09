@@ -14,3 +14,11 @@ def load_config():
     config = ujson.loads(data)
     log.debug("config loaded: " + str(config))
     return config
+
+def save_config(config):
+    # Open the JSON file for writing
+    log.info("saving config")
+    with open('config.json', 'w') as file:
+        # Write the dictionary to the file in JSON format
+        ujson.dump(config, file)
+    log.debug("config saved: " + str(config))
