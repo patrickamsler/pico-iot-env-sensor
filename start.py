@@ -23,7 +23,7 @@ def main():
 
     log.info("initializing SHT31 sensor")
     sht31 = SHT3X(
-        i2c=I2C(0, scl=Pin(1), sda=Pin(0), freq=100000)
+        i2c=I2C(1, scl=Pin(27), sda=Pin(26), freq=100000)
     )
     if not sht31.isConnected():
         raise RuntimeError("SHT31 not found on I2C bus")
