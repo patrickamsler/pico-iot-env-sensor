@@ -8,11 +8,13 @@ import sys
 from util.statusled import StatusLed
 import json
 
+
 def init_logging():
     # logging.basicConfig(filename='log-file.log', level=logging.DEBUG, filemode='a') # log to file
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout) # log to console
+    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)  # log to console
     for handler in logging.getLogger().handlers:
         handler.setFormatter(logging.Formatter("[%(levelname)s] - %(name)s - %(message)s"))
+
 
 def main():
     init_logging()
@@ -50,7 +52,10 @@ def main():
     # main data acquisition an publishing loop
     def publish_data(timer):
         if not wifi.is_connected():
-            log.info("WiFi not connected. Not publishing data")
+            log.info("WiFi not connected. Trying to reconnect ...")
+            # try to reconnect for 15 seconds
+            # the timeout needs to be smaller than the timer period
+            wifi.connect(timeout=15)
             return
 
         temp, hum, error = sht31.read()
@@ -72,7 +77,7 @@ def main():
             statusLed.tick()
             log.debug("Data published")
         except Exception as e:
-            log.error("Error publishing data: ", e)
+            log.error("Error publishing data: " + str(e))
 
     log.info("starting data acquisition loop")
     period = config["sample_rate_seconds"] * 1000
